@@ -178,13 +178,15 @@ h1 {
     flex-direction: column;
     align-items: center;
     padding: 0px;
-    padding-bottom: 10px;
+    padding-bottom: 20px;
     margin: 0;
-    height: 15vh;
+    height: auto;
+    box-sizing: border-box;
   }
 
   .task-form input {
     text-align: center;
+    font-size: large;
   }
 
   .task-form,
