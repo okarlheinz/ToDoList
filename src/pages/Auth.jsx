@@ -35,7 +35,7 @@ const Auth = () => {
     <div className="container">
       <div className="header">
         <img src={Logo} alt="coderx" />
-        <h1>Todo List</h1>
+        <h1>To-do List</h1>
       </div>
       <div className="form-box">
         <h2>{isLogin ? "Login" : "Cadastre-se"}</h2>

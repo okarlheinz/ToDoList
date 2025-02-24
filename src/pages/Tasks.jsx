@@ -16,6 +16,7 @@ import {
   FaCalendarDay,
   FaCalendarAlt,
   FaSignOutAlt,
+  FaPen,
   FaTrash,
 } from "react-icons/fa";
 import "./Tasks.css";
@@ -28,7 +29,6 @@ import TaskForm from "../components/TaskForm";
 import TaskItem from "../components/TaskItem";
 import Sidebar from "../components/Sidebar";
 
-
 const Tasks = () => {
   const auth = getAuth();
   const [user, setUser] = useState(null);
@@ -36,6 +36,10 @@ const Tasks = () => {
   const [newTask, setNewTask] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [filter, setFilter] = useState("open");
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editTask, setEditTask] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDueDate, setEditDueDate] = useState("");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -46,7 +50,12 @@ const Tasks = () => {
           where("userId", "==", currentUser.uid)
         );
         onSnapshot(q, (snapshot) => {
-          setTasks(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+          const loadedTasks = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          console.log("Tarefas carregadas:", loadedTasks); // Debug
+          setTasks(loadedTasks);
         });
       }
     });
@@ -103,10 +112,71 @@ const Tasks = () => {
     return true;
   });
 
+  // Edição
+
+  const openEditModal = (task) => {
+    console.log("Abrindo modal para tarefa:", task); // Debug
+
+    if (!task) {
+      console.error("Erro: Nenhuma tarefa foi passada para edição.");
+      return;
+    }
+
+    setEditTask(task);
+    setEditTitle(task.title);
+    setEditDueDate(task.dueDate || ""); // Evita erro se `dueDate` estiver indefinido
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditTask(null);
+  };
+
+  const handleEditTask = async () => {
+    if (!editTask) return;
+
+    const taskRef = doc(db, "tasks", editTask.id);
+    await updateDoc(taskRef, { title: editTitle, dueDate: editDueDate });
+
+    closeEditModal();
+  };
+
+  // Fim edição
+
   return (
     <div className="tasks-container">
-      <Sidebar user={user} filter={filter} setFilter={setFilter} handleLogout={() => signOut(auth)} />
+      <Sidebar
+        user={user}
+        filter={filter}
+        setFilter={setFilter}
+        handleLogout={() => signOut(auth)}
+      />
+      {isEditModalOpen && console.log("Modal deve estar visível")}
 
+      {isEditModalOpen && (
+        <div className="modal-overlay" onClick={closeEditModal}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h2>Editar Tarefa</h2>
+            <input
+              className="modal-input-title"
+              type="text"
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+            />
+            <input
+              className="modal-input-title"
+              type="date"
+              value={editDueDate}
+              onChange={(e) => setEditDueDate(e.target.value)}
+            />
+            <div className="modal-buttons">
+              <button onClick={handleEditTask}>Salvar</button>
+              <button onClick={closeEditModal}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <main className="task-list">
         <h1>{filterNames[filter]}</h1> {/* Título dinâmico da página */}
@@ -162,6 +232,13 @@ const Tasks = () => {
                           </small>
                         </div>
                         <button
+                          className="edit-button"
+                          onClick={() => openEditModal(task)}
+                        >
+                          <FaPen size={18} color="blue" />
+                        </button>
+
+                        <button
                           className="delete-button"
                           onClick={() => deleteTask(task.id)}
                         >
@@ -207,6 +284,12 @@ const Tasks = () => {
                             {new Date(task.dueDate).toLocaleDateString("pt-BR")}
                           </small>
                         </div>
+                        <button
+                          className="edit-button"
+                          onClick={() => openEditModal(task)}
+                        >
+                          <FaPen size={18} color="blue" />
+                        </button>
                         <button
                           className="delete-button"
                           onClick={() => deleteTask(task.id)}
@@ -254,6 +337,12 @@ const Tasks = () => {
                             {new Date(task.dueDate).toLocaleDateString("pt-BR")}
                           </small>
                         </div>
+                        <button
+                          className="edit-button"
+                          onClick={() => openEditModal(task)}
+                        >
+                          <FaPen size={18} color="blue" />
+                        </button>
                         <button
                           className="delete-button"
                           onClick={() => deleteTask(task.id)}

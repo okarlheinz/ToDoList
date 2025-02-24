@@ -40,7 +40,7 @@ input[type="date"] {
   background-color: transparent;
 }
 
-input[type="text"] {
+.new-task-input {
   width: 400px;
 }
 
@@ -97,6 +97,18 @@ li {
 .task-item.completed .task-text {
   color: #95a5a6;
   text-decoration: line-through;
+}
+
+.edit-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.edit-button:hover {
+  transform: scale(1.2);
 }
 
 /* Botão de excluir */
@@ -166,6 +178,84 @@ h1 {
   font-size: 15px;
 }
 
+/* Modal */
+
+/* Fundo escuro cobrindo toda a tela */
+.modal-overlay {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999; /* Garante que o modal esteja na frente de tudo */
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  text-align: center;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Classe que ativa a animação quando o modal é aberto */
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal.show {
+  transform: scale(1); /* Expande suavemente para o tamanho normal */
+}
+
+/* Alinha botões no modal */
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.modal-input-title {
+  display: flex;
+  width: 80%;
+}
+
+/* Ajusta os botões dentro do modal */
+.modal-buttons button {
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+/* Botão de salvar */
+.modal-buttons button:first-child {
+  background-color: #3498db;
+  color: white;
+}
+
+/* Botão de cancelar */
+.modal-buttons button:last-child {
+  background-color: #e74c3c;
+  color: white;
+}
+
+/* Efeito hover para os botões */
+.modal-buttons button:hover {
+  opacity: 0.8;
+}
+
+/* Fim modal */
+
 /* ========== RESPONSIVIDADE PARA TASKS ========== */
 @media screen and (max-width: 768px) {
   .task-container {
@@ -195,7 +285,7 @@ h1 {
     width: 90vw;
   }
 
-  input[type="text"] {
+  .new-task-input {
     width: 100%;
   }
 
