@@ -1,0 +1,169 @@
+/* Estilos gerais */
+body {
+  font-family: Arial, sans-serif;
+}
+
+button {
+  padding: 10px 15px;
+  background: #3498db;
+  color: white;
+  border: none;
+  /* border-radius: 5px; */
+  cursor: pointer;
+}
+
+button:hover {
+  background: #2980b9;
+}
+
+/* Layout principal */
+.task-container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 200px;
+  background: #2c3e50;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  position: fixed;
+  height: 100%;
+}
+
+.task-content {
+  /* margin-left: 220px; */
+  padding: 20px;
+  flex-grow: 1;
+}
+
+/* Sidebar */
+.sidebar button {
+  background: transparent;
+  border: none;
+  color: white;
+  padding: 10px;
+  margin: 5px 0;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  border-bottom: solid 1px #2980b9;
+}
+
+.sidebar button:hover {
+  background: #34495e;
+}
+
+.sidebar button.active {
+  background: #3b4f65;
+}
+
+.sidebar .logout-button  {
+  margin-bottom: 50px;
+}
+
+.sidebar h3 span {
+  font-size: 15px;
+}
+
+.logout-button {
+  margin-top: 20px;
+  color: #e74c3c;
+}
+
+.logout-button:hover {
+  background: #c0392b;
+}
+
+/* Filtros */
+
+
+/* Inputs */
+input[type="text"], input[type="date"] {
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Lista de tarefas */
+ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ecf0f1;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  position: relative;
+  height: 50px;
+  width: 50vw;
+}
+
+.task-checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #3498db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.task-checkbox.checked {
+  background: #3498db;
+  color: white;
+}
+
+.task-text {
+  flex-grow: 1;
+}
+
+.task-list {
+  margin-left: 300px;
+  margin-right: 100px;
+}
+
+/* Botão de excluir */
+.delete-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+/* Mensagens de feedback */
+.success-message {
+  color: green;
+  margin: 10px 0;
+}
+
+.error-message {
+  color: red;
+  margin: 10px 0;
+}
+
+/* Cabeçalho */
+h1 {
+  text-align: center;
+padding: 50px;
+  margin-bottom: 20px;
+  color: #333;
+}
