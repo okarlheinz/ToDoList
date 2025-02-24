@@ -187,6 +187,7 @@ h1 {
   .task-form input {
     text-align: center;
     font-size: large;
+    margin: 15px 0;
   }
 
   .task-form,

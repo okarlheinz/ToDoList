@@ -99,8 +99,8 @@
     padding: 10px 0;
   }
   .sidebar h3, 
-  .sidebar .toggle-sidebar,
-  .sidebar .logout-button{
+  .sidebar .toggle-sidebar
+  {
     display: none;
   }
 
@@ -111,5 +111,8 @@
     gap: 3px;
     border: none;
     text-align: center;
+  }
+  .sidebar .logout-button {
+    margin-bottom: 0px;
   }
 }
