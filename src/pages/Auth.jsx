@@ -6,6 +6,7 @@ import {
 } from "firebase/auth";
 import { app } from "../firebaseConfig"; // Importando corretamente o app
 import "./Auth.css";
+import Logo from "../assets/Prancheta 2.png"
 
 const auth = getAuth(app);
 
@@ -31,7 +32,8 @@ const Auth = () => {
 
   return (
     <div className="container">
-      <div className="title">
+      <div className="header">
+        <img src={Logo} alt="coderx" />
         <h1>Todo List</h1>
       </div>
       <div className="form-box">
