@@ -1,9 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { db } from "../firebaseConfig";
-import { collection, addDoc, query, where, onSnapshot, updateDoc, doc } from "firebase/firestore";
-import { FaRegCircle, FaCheckCircle, FaCalendarDay, FaCalendarAlt, FaSignOutAlt, FaTrash } from "react-icons/fa";
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  onSnapshot,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
+import {
+  FaRegCircle,
+  FaCheckCircle,
+  FaCalendarDay,
+  FaCalendarAlt,
+  FaSignOutAlt,
+  FaTrash,
+} from "react-icons/fa";
 import "./Tasks.css";
+
+import DataAtual from "../components/DataAtual";
 
 const Tasks = () => {
   const auth = getAuth();
@@ -17,7 +34,10 @@ const Tasks = () => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        const q = query(collection(db, "tasks"), where("userId", "==", currentUser.uid));
+        const q = query(
+          collection(db, "tasks"),
+          where("userId", "==", currentUser.uid)
+        );
         onSnapshot(q, (snapshot) => {
           setTasks(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
         });
@@ -58,81 +78,163 @@ const Tasks = () => {
     closed: "Tarefas Concluídas",
     today: "Tarefas para Hoje",
     future: "Tarefas Futuras",
-    all: "Todas as Tarefas"
+    all: "Todas as Tarefas",
   };
 
   const filteredTasks = tasks.filter((task) => {
     if (filter === "open") return !task.completed;
     if (filter === "closed") return task.completed;
-    if (filter === "today") return !task.completed && task.dueDate === new Date().toISOString().split("T")[0];
-    if (filter === "future") return !task.completed && task.dueDate > new Date().toISOString().split("T")[0];
+    if (filter === "today")
+      return (
+        !task.completed &&
+        task.dueDate === new Date().toISOString().split("T")[0]
+      );
+    if (filter === "future")
+      return (
+        !task.completed && task.dueDate > new Date().toISOString().split("T")[0]
+      );
     return true;
   });
-  
+
+  const TaskItem = ({ task, toggleComplete, deleteTask }) => (
+    <li className="task-item">
+      <span
+        className="task-checkbox"
+        onClick={() => toggleComplete(task.id, task.completed)}
+      >
+        {task.completed ? (
+          <FaCheckCircle color="green" size={22} />
+        ) : (
+          <FaRegCircle size={22} />
+        )}
+      </span>
+      <div className="task-content">
+        <p>{task.title}</p>
+        <small className="due-date">
+          {new Date(task.dueDate).toLocaleDateString("pt-BR")}
+        </small>
+      </div>
+      <button className="delete-button" onClick={() => deleteTask(task.id)}>
+        <FaTrash size={20} color="red" />
+      </button>
+    </li>
+  );
 
   return (
     <div className="tasks-container">
       <nav className="sidebar">
-        <h3>Bem-vindo, <span>{user?.email}</span></h3>
+        <h3>
+          Bem-vindo, <span>{user?.email}</span>
+        </h3>
         <button onClick={handleLogout} className="logout-button">
           <FaSignOutAlt /> Sair
         </button>
-        <button className={filter === "open" ? "active" : ""} onClick={() => setFilter("open")}>
+        <button
+          className={filter === "open" ? "active" : ""}
+          onClick={() => setFilter("open")}
+        >
           <FaRegCircle /> Em Aberto
         </button>
-        <button className={filter === "closed" ? "active" : ""} onClick={() => setFilter("closed")}>
+        <button
+          className={filter === "closed" ? "active" : ""}
+          onClick={() => setFilter("closed")}
+        >
           <FaCheckCircle /> Concluídas
         </button>
-        <button className={filter === "today" ? "active" : ""} onClick={() => setFilter("today")}>
+        <button
+          className={filter === "today" ? "active" : ""}
+          onClick={() => setFilter("today")}
+        >
           <FaCalendarDay /> Para Hoje
         </button>
-        <button className={filter === "future" ? "active" : ""} onClick={() => setFilter("future")}>
+        <button
+          className={filter === "future" ? "active" : ""}
+          onClick={() => setFilter("future")}
+        >
           <FaCalendarAlt /> Futuras
         </button>
       </nav>
-      
+
       <main className="task-list">
-        <h1>{filterNames[filter]}</h1>  {/* Título dinâmico da página */}
-        <form onSubmit={handleAddTask} className="task-form">
-          <input
-            type="text"
-            placeholder="Nova tarefa"
-            value={newTask}
-            onChange={(e) => setNewTask(e.target.value)}
-            required
-          />
-          <input
-            type="date"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-          />
-          <button type="submit">Adicionar</button>
-        </form>
-        <ul>
-          {filteredTasks.map((task) => (
-            <li key={task.id} className="task-item">
-              <span
-                className="task-checkbox"
-                onClick={() => toggleComplete(task.id, task.completed)}
-              >
-                {task.completed ? (
-                  <FaCheckCircle color="green" size={22} />
-                ) : (
-                  <FaRegCircle size={22} />
-                )}
-              </span>
+        <h1>{filterNames[filter]}</h1>
+        <div className="form">
+          <form onSubmit={handleAddTask} className="task-form">
+            <input
+              type="text"
+              className="new-task-input"
+              placeholder="Digite aqui uma nova tarefa..."
+              value={newTask}
+              onChange={(e) => setNewTask(e.target.value)}
+              required
+            />
+            <input
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+            />
+            <button type="submit">Adicionar</button>
+          </form>
 
-              <div className="task-content">
-                <p>{task.title}</p>
-                <small className="due-date">{task.dueDate}</small>
-              </div>
+          {filter === "open" && (
+            <div className="task-categories">
+              {filteredTasks.some(
+                (task) => task.dueDate < new Date().toISOString().split("T")[0]
+              ) && <h3 className="task-category">Atrasada</h3>}
+              {filteredTasks
+                .filter(
+                  (task) =>
+                    task.dueDate < new Date().toISOString().split("T")[0]
+                )
+                .map((task) => (
+                  <TaskItem
+                    key={task.id}
+                    task={task}
+                    toggleComplete={toggleComplete}
+                    deleteTask={deleteTask}
+                  />
+                ))}
 
-              <button className="delete-button" onClick={() => deleteTask(task.id)}>
-                <FaTrash size={20} color="red" />
-              </button>
-            </li>
-          ))}
-        </ul>
+              {filteredTasks.some(
+                (task) =>
+                  task.dueDate === new Date().toISOString().split("T")[0]
+              ) && (
+                <h3 className="task-category">
+                  Hoje - <DataAtual />
+                </h3>
+              )}
+              {filteredTasks
+                .filter(
+                  (task) =>
+                    task.dueDate === new Date().toISOString().split("T")[0]
+                )
+                .map((task) => (
+                  <TaskItem
+                    key={task.id}
+                    task={task}
+                    toggleComplete={toggleComplete}
+                    deleteTask={deleteTask}
+                  />
+                ))}
+
+              {filteredTasks.some(
+                (task) => task.dueDate > new Date().toISOString().split("T")[0]
+              ) && <h3 className="task-category">Em Breve</h3>}
+              {filteredTasks
+                .filter(
+                  (task) =>
+                    task.dueDate > new Date().toISOString().split("T")[0]
+                )
+                .map((task) => (
+                  <TaskItem
+                    key={task.id}
+                    task={task}
+                    toggleComplete={toggleComplete}
+                    deleteTask={deleteTask}
+                  />
+                ))}
+            </div>
+          )}
+        </div>
       </main>
     </div>
   );
