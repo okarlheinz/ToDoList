@@ -1,6 +1,9 @@
 /* Estilos gerais */
 body {
   font-family: Arial, sans-serif;
+  background-image: url("../assets/wallpaper.jpg");
+  background-size: cover;
+  height: 100vh;
 }
 
 button {
@@ -23,78 +26,23 @@ button:hover {
   height: 100vh;
 }
 
-.sidebar {
-  width: 200px;
-  background: #2c3e50;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-}
-
 .task-content {
   padding: 20px;
   flex-grow: 1;
 }
 
-/* Sidebar */
-.sidebar button {
-  background: transparent;
-  border: none;
-  color: white;
-  padding: 10px;
-  margin: 5px 0;
-  cursor: pointer;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 16px;
-  border-bottom: solid 1px #2980b9;
-  transition: background 0.3s ease-in-out;
-}
-
-.sidebar button:hover {
-  background: #34495e;
-}
-
-.sidebar button.active {
-  background: #3b4f65;
-}
-
-.sidebar .logout-button {
-  margin-bottom: 50px;
-}
-
-.sidebar h3 span {
-  font-size: 15px;
-}
-
-.logout-button {
-  margin-top: 20px;
-  color: #e74c3c;
-}
-
-.logout-button:hover {
-  background: #c0392b;
-}
-
 /* Inputs */
-input[type="text"], input[type="date"] {
+input[type="text"],
+input[type="date"] {
   padding: 10px;
   margin: 5px;
   border: 1px solid #ccc;
+  background-color: transparent;
 }
 
-input[type="text"]{
-  /* background-color: #000; */
+input[type="text"] {
   width: 400px;
 }
-
 
 /* Lista de tarefas */
 ul {
@@ -114,7 +62,6 @@ li {
   position: relative;
   height: 5vh;
   width: 50vw;
-  /* border-top: solid 1px #cdcdcd; */
   border-bottom: solid 1px #cdcdcd;
   transition: background 0.3s ease-in-out;
 }
@@ -124,7 +71,6 @@ li {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  /* border: 2px solid #3498db; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -220,5 +166,39 @@ h1 {
   font-size: 15px;
 }
 
+/* ========== RESPONSIVIDADE PARA TASKS ========== */
+@media screen and (max-width: 768px) {
+  .task-container {
+    flex-direction: column;
+    align-items: center;
+  }
 
+  .task-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px;
+    padding-bottom: 10px;
+    margin: 0;
+    height: 15vh;
+  }
 
+  .task-form input {
+    text-align: center;
+  }
+
+  .task-form,
+  li {
+    width: 90vw;
+  }
+
+  input[type="text"] {
+    width: 100%;
+  }
+
+  h1 {
+    margin-top: 100px;
+    margin-bottom: 15px;
+    padding: 0px;
+  }
+}

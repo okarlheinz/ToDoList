@@ -7,6 +7,7 @@ import {
 import { app } from "../firebaseConfig"; // Importando corretamente o app
 import "./Auth.css";
 import Logo from "../assets/Prancheta 2.png"
+import Fundo from "../assets/wallpaper.jpg"
 
 const auth = getAuth(app);
 
