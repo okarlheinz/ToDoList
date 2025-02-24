@@ -1,6 +1,11 @@
 import React, { useState } from "react";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
 import { app } from "../firebaseConfig"; // Importando corretamente o app
+import "./Auth.css";
 
 const auth = getAuth(app);
 
@@ -25,16 +30,36 @@ const Auth = () => {
   };
 
   return (
-    <div>
-      <h2>{isLogin ? "Login" : "Cadastro"}</h2>
-      <form onSubmit={handleAuth}>
-        <input type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Senha" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <button type="submit">{isLogin ? "Entrar" : "Cadastrar"}</button>
-      </form>
-      <button onClick={() => setIsLogin(!isLogin)}>
-        {isLogin ? "Criar uma conta" : "Já tenho uma conta"}
-      </button>
+    <div className="container">
+      <div className="title">
+        <h1>Todo List</h1>
+      </div>
+      <div className="form-box">
+        <h2>{isLogin ? "Login" : "Cadastre-se"}</h2>
+        <form onSubmit={handleAuth}>
+          <input
+            type="email"
+            placeholder="E-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button type="submit">{isLogin ? "Entrar" : "Cadastrar"}</button>
+        </form>
+        <label htmlFor="">
+          Ainda não tem uma conta?
+          <button className="sign-btn" onClick={() => setIsLogin(!isLogin)}>
+            {isLogin ? "Cadastre-se" : "Já tenho uma conta"}
+          </button>
+        </label>
+      </div>
     </div>
   );
 };
