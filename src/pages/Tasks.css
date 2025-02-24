@@ -31,6 +31,8 @@ button:hover {
   flex-direction: column;
   padding: 20px;
   position: fixed;
+  top: 0;
+  left: 0;
   height: 100%;
 }
 
@@ -87,6 +89,12 @@ input[type="text"], input[type="date"] {
   margin: 5px;
   border: 1px solid #ccc;
 }
+
+input[type="text"]{
+  /* background-color: #000; */
+  width: 400px;
+}
+
 
 /* Lista de tarefas */
 ul {

@@ -19,7 +19,6 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import "./Tasks.css";
-import DataAtual from "../components/DataAtual"
 
 const Tasks = () => {
   const auth = getAuth();
@@ -95,6 +94,28 @@ const Tasks = () => {
     return true;
   });
 
+  const TaskItem = ({ task, toggleComplete, deleteTask }) => (
+    <li className="task-item">
+      <span
+        className="task-checkbox"
+        onClick={() => toggleComplete(task.id, task.completed)}
+      >
+        {task.completed ? (
+          <FaCheckCircle color="green" size={22} />
+        ) : (
+          <FaRegCircle size={22} />
+        )}
+      </span>
+      <div className="task-content">
+        <p>{task.title}</p>
+        <small className="due-date">{task.dueDate}</small>
+      </div>
+      <button className="delete-button" onClick={() => deleteTask(task.id)}>
+        <FaTrash size={20} color="red" />
+      </button>
+    </li>
+  );
+
   return (
     <div className="tasks-container">
       <nav className="sidebar">
@@ -131,7 +152,7 @@ const Tasks = () => {
       </nav>
 
       <main className="task-list">
-        <h1>{filterNames[filter]}</h1> {/* Título dinâmico da página */}
+        <h1>{filterNames[filter]}</h1>
         <div className="form">
           <form onSubmit={handleAddTask} className="task-form">
             <input
@@ -150,98 +171,61 @@ const Tasks = () => {
             <button type="submit">Adicionar</button>
           </form>
 
-<div className="task-categories">
-  {/* Atrasadas */}
-  {filteredTasks.some(task => task.dueDate < new Date().toISOString().split("T")[0]) && (
-    <>
-      <h3 className="task-category">Atrasadas</h3>
-      <ul>
-        {filteredTasks
-          .filter(task => task.dueDate < new Date().toISOString().split("T")[0])
-          .map(task => (
-            <li key={task.id} className="task-item">
-              <span
-                className="task-checkbox"
-                onClick={() => toggleComplete(task.id, task.completed)}
-              >
-                {task.completed ? <FaCheckCircle color="green" size={22} /> : <FaRegCircle size={22} />}
-              </span>
-              <div className="task-content">
-                <p>{task.title}</p>
-                <small className="due-date" style={{ color: "red" }}>
-                  {new Date(task.dueDate).toLocaleDateString("pt-BR")}
-                </small>
-              </div>
-              <button className="delete-button" onClick={() => deleteTask(task.id)}>
-                <FaTrash size={20} color="red" />
-              </button>
-            </li>
-          ))}
-      </ul>
-    </>
-  )}
+          {filter === "open" && (
+            <div className="task-categories">
+              {filteredTasks.some(
+                (task) => task.dueDate < new Date().toISOString().split("T")[0]
+              ) && <h3 className="task-category">Atrasada</h3>}
+              {filteredTasks
+                .filter(
+                  (task) =>
+                    task.dueDate < new Date().toISOString().split("T")[0]
+                )
+                .map((task) => (
+                  <TaskItem
+                    key={task.id}
+                    task={task}
+                    toggleComplete={toggleComplete}
+                    deleteTask={deleteTask}
+                  />
+                ))}
 
-  {/* Hoje */}
-  {filteredTasks.some(task => task.dueDate === new Date().toISOString().split("T")[0]) && (
-    <>
-      <h3 className="task-category">Hoje - <DataAtual/></h3>
-      <ul>
-        {filteredTasks
-          .filter(task => task.dueDate === new Date().toISOString().split("T")[0])
-          .map(task => (
-            <li key={task.id} className="task-item">
-              <span
-                className="task-checkbox"
-                onClick={() => toggleComplete(task.id, task.completed)}
-              >
-                {task.completed ? <FaCheckCircle color="green" size={22} /> : <FaRegCircle size={22} />}
-              </span>
-              <div className="task-content">
-                <p>{task.title}</p>
-                <small className="due-date" style={{ color: "blue" }}>
-                  {new Date(task.dueDate).toLocaleDateString("pt-BR")}
-                </small>
-              </div>
-              <button className="delete-button" onClick={() => deleteTask(task.id)}>
-                <FaTrash size={20} color="red" />
-              </button>
-            </li>
-          ))}
-      </ul>
-    </>
-  )}
+              {filteredTasks.some(
+                (task) =>
+                  task.dueDate === new Date().toISOString().split("T")[0]
+              ) && <h3 className="task-category">Hoje</h3>}
+              {filteredTasks
+                .filter(
+                  (task) =>
+                    task.dueDate === new Date().toISOString().split("T")[0]
+                )
+                .map((task) => (
+                  <TaskItem
+                    key={task.id}
+                    task={task}
+                    toggleComplete={toggleComplete}
+                    deleteTask={deleteTask}
+                  />
+                ))}
 
-  {/* Em Breve */}
-  {filteredTasks.some(task => task.dueDate > new Date().toISOString().split("T")[0]) && (
-    <>
-      <h3 className="task-category">Em Breve</h3>
-      <ul>
-        {filteredTasks
-          .filter(task => task.dueDate > new Date().toISOString().split("T")[0])
-          .map(task => (
-            <li key={task.id} className="task-item">
-              <span
-                className="task-checkbox"
-                onClick={() => toggleComplete(task.id, task.completed)}
-              >
-                {task.completed ? <FaCheckCircle color="green" size={22} /> : <FaRegCircle size={22} />}
-              </span>
-              <div className="task-content">
-                <p>{task.title}</p>
-                <small className="due-date" style={{ color: "green" }}>
-                  {new Date(task.dueDate).toLocaleDateString("pt-BR")}
-                </small>
-              </div>
-              <button className="delete-button" onClick={() => deleteTask(task.id)}>
-                <FaTrash size={20} color="red" />
-              </button>
-            </li>
-          ))}
-      </ul>
-    </>
-  )}
-</div>
-
+              {filteredTasks.some(
+                (task) => task.dueDate > new Date().toISOString().split("T")[0]
+              ) && <h3 className="task-category">Em Breve</h3>}
+              {filteredTasks
+                .filter(
+                  (task) =>
+                    task.dueDate > new Date().toISOString().split("T")[0]
+                )
+                .map((task) => (
+                  <TaskItem
+                    key={task.id}
+                    task={task}
+                    toggleComplete={toggleComplete}
+                    deleteTask={deleteTask}
+                  />
+                ))}
+            </div>
+          )}
         </div>
       </main>
     </div>
