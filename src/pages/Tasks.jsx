@@ -11,9 +11,8 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { FaRegCircle, FaCheckCircle, FaPen, FaTrash } from "react-icons/fa";
+import { FaRegCircle, FaCheckCircle, FaPen, FaTrash, FaCalendarAlt } from "react-icons/fa";
 import "./Tasks.css";
-import DataAtual from "../components/DataAtual";
 import Sidebar from "../components/Sidebar";
 
 const Tasks = () => {
@@ -21,17 +20,16 @@ const Tasks = () => {
   const [user, setUser] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
-  const getLocalDate = () => {
-    const today = new Date();
-    today.setMinutes(today.getMinutes() - today.getTimezoneOffset()); // Ajusta para o fuso local
-    return today.toISOString().split("T")[0];
-  };
-
-  const [dueDate, setDueDate] = useState(getLocalDate());
-
   const [filter, setFilter] = useState("open");
 
-  // Estado para controle do modal de edição
+  const getTodayDate = () => {
+    const today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    return today.toISOString().split("T")[0]; // Retorna YYYY-MM-DD
+  };
+
+  const [dueDate, setDueDate] = useState(getTodayDate());
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -39,7 +37,6 @@ const Tasks = () => {
   const [editTitle, setEditTitle] = useState("");
   const [editDueDate, setEditDueDate] = useState("");
 
-  // Carregar tarefas do Firestore ao logar
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -53,35 +50,29 @@ const Tasks = () => {
     return () => unsubscribe();
   }, []);
 
-  // Adicionar nova tarefa
   const handleAddTask = async (e) => {
     e.preventDefault();
     if (!newTask.trim()) return;
-
-    const adjustedDate = new Date(dueDate + "T00:00:00"); // Garante que seja no horário correto
 
     await addDoc(collection(db, "tasks"), {
       title: newTask,
       completed: false,
       userId: user.uid,
-      dueDate: adjustedDate.toISOString().split("T")[0], // Salva apenas a parte da data
+      dueDate: dueDate,
     });
 
     setNewTask("");
-    setDueDate(getLocalDate());
+    setDueDate(getTodayDate());
   };
 
-  // Alternar status de conclusão da tarefa
   const toggleComplete = async (id, completed) => {
     await updateDoc(doc(db, "tasks", id), { completed: !completed });
   };
 
-  // Excluir tarefa
   const deleteTask = async (id) => {
     await deleteDoc(doc(db, "tasks", id));
   };
 
-  // Abrir modal de edição
   const openEditModal = (task) => {
     if (!task) return;
     setEditTask(task);
@@ -92,7 +83,6 @@ const Tasks = () => {
     setTimeout(() => setIsEditModalOpen(true), 50);
   };
 
-  // Fechar modal de edição
   const closeEditModal = () => {
     setIsClosing(true);
     setTimeout(() => {
@@ -102,38 +92,28 @@ const Tasks = () => {
     }, 100);
   };
 
-  // Atualizar tarefa editada
   const handleEditTask = async () => {
     if (!editTask) return;
     await updateDoc(doc(db, "tasks", editTask.id), { title: editTitle, dueDate: editDueDate });
     closeEditModal();
   };
 
-  // Filtros para exibir tarefas conforme o status
   const filterNames = {
     open: "Tarefas em Aberto",
     closed: "Tarefas Concluídas",
     today: "Tarefas para Hoje",
     future: "Tarefas Futuras",
-    all: "Todas as Tarefas",
   };
+
+  const today = getTodayDate();
 
   const filteredTasks = tasks.filter((task) => {
     if (filter === "open") return !task.completed;
     if (filter === "closed") return task.completed;
-    if (filter === "today") return !task.completed && task.dueDate === new Date().toISOString().split("T")[0];
-    if (filter === "future") return !task.completed && task.dueDate > new Date().toISOString().split("T")[0];
+    if (filter === "today") return !task.completed && task.dueDate === today;
+    if (filter === "future") return !task.completed && task.dueDate > today;
     return true;
   });
-
-  // Função para obter a data local correta
-
-  const getTodayDate = () => {
-    const today = new Date();
-    today.setMinutes(today.getMinutes() - today.getTimezoneOffset()); // Ajusta para o fuso local
-    return today.toISOString().split("T")[0]; // Retorna no formato YYYY-MM-DD
-  };
-
 
   return (
     <div className="tasks-container">
@@ -163,49 +143,43 @@ const Tasks = () => {
           </form>
 
           <div className="task-categories">
-            {["Atrasadas", "Hoje", "Em Breve"].map((category, index) => {
-              const filtered = filteredTasks.filter((task) => {
-                const today = getTodayDate(); // Obtém a data local correta
-
-                if (category === "Atrasadas") return task.dueDate < today;
-                if (category === "Hoje") return task.dueDate === today;
-                if (category === "Em Breve") return task.dueDate > today;
-
-                return task.dueDate > today;
-              });
-
-              return filtered.length > 0 ? (
-                <div key={index}>
-                  <h3 className="task-category">{category === "Hoje" ? `Hoje - ${getLocalDate()}` : category}</h3>
-                  <ul>
-                    {filtered.map((task) => (
-                      <li key={task.id} className="task-item">
-                        <span className="task-checkbox" onClick={() => toggleComplete(task.id, task.completed)}>
-                          {task.completed ? <FaCheckCircle color="green" size={22} /> : <FaRegCircle size={22} />}
-                        </span>
-                        <div className="task-content">
-                          <p>{task.title}</p>
-                          <small className="due-date" style={{ color: category === "Atrasadas" ? "red" : category === "Hoje" ? "blue" : "green" }}>
-                            {task.dueDate}
-                          </small>
-                        </div>
-                        <button className="edit-button" onClick={() => openEditModal(task)}>
-                          <FaPen size={18} color="blue" />
-                        </button>
-                        <button className="delete-button" onClick={() => deleteTask(task.id)}>
-                          <FaTrash size={20} color="red" />
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null;
-            })}
+            {filter === "open" && (
+              <div className="task-category">
+                <h3>Atrasadas</h3>
+                <ul>{filteredTasks.filter(task => task.dueDate < today).map(task => renderTask(task, "red", toggleComplete, openEditModal, deleteTask))}</ul>
+                <h3>Hoje</h3>
+                <ul>{filteredTasks.filter(task => task.dueDate === today).map(task => renderTask(task, "blue", toggleComplete, openEditModal, deleteTask))}</ul>
+                <h3>Em Breve</h3>
+                <ul>{filteredTasks.filter(task => task.dueDate > today).map(task => renderTask(task, "green", toggleComplete, openEditModal, deleteTask))}</ul>
+              </div>
+            )}
+            {filter !== "open" && <ul>{filteredTasks.map(task => renderTask(task, "black", toggleComplete, openEditModal, deleteTask))}</ul>}
           </div>
         </div>
       </main>
     </div>
   );
 };
+
+// 🔹 Agora os botões funcionam corretamente!
+const renderTask = (task, color, toggleComplete, openEditModal, deleteTask) => (
+  <li key={task.id} className="task-item">
+    <span className="task-checkbox" onClick={() => toggleComplete(task.id, task.completed)}>
+      {task.completed ? <FaCheckCircle color="green" size={22} /> : <FaRegCircle size={22} />}
+    </span>
+    <div className="task-content">
+      <p>{task.title}</p>
+      <small className="due-date" style={{ color }}>
+        ({task.dueDate})
+      </small>
+    </div>
+    <button className="edit-button" onClick={() => openEditModal(task)}>
+      <FaPen size={18} color="blue" />
+    </button>
+    <button className="delete-button" onClick={() => deleteTask(task.id)}>
+      <FaTrash size={20} color="red" />
+    </button>
+  </li>
+);
 
 export default Tasks;
