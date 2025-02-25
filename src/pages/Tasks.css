@@ -178,9 +178,7 @@ h1 {
   font-size: 15px;
 }
 
-/* Modal */
-
-/* Fundo escuro cobrindo toda a tela */
+/* Modal com efeito de fade-in e fade-out */
 .modal-overlay {
   display: flex !important;
   align-items: center;
@@ -190,8 +188,11 @@ h1 {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 9999; /* Garante que o modal esteja na frente de tudo */
+  background: rgba(0, 0, 0, 0);
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.1s ease-in-out, visibility 0.1s ease-in-out, background 0.1s ease-in-out;
 }
 
 .modal {
@@ -204,17 +205,38 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
+  transform: scale(0.85);
+  opacity: 0;
+  transition: transform 0.1s ease-in-out, opacity 0.1s ease-in-out;
 }
 
-/* Classe que ativa a animação quando o modal é aberto */
+/* Quando o modal for exibido */
 .modal-overlay.show {
   opacity: 1;
   visibility: visible;
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .modal.show {
-  transform: scale(1); /* Expande suavemente para o tamanho normal */
+  transform: scale(1);
+  opacity: 1;
 }
+
+
+/* Quando o modal estiver fechando */
+.modal-overlay.closing {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.modal.closing {
+  transform: scale(0.85);
+  opacity: 0;
+}
+
+
+
+
 
 /* Alinha botões no modal */
 .modal-buttons {

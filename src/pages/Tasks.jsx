@@ -23,6 +23,7 @@ import "./Tasks.css";
 import DataAtual from "../components/DataAtual";
 import { deleteDoc } from "firebase/firestore";
 
+
 // components
 import TaskList from "../components/TaskList";
 import TaskForm from "../components/TaskForm";
@@ -114,23 +115,34 @@ const Tasks = () => {
 
   // Edição
 
-  const openEditModal = (task) => {
-    console.log("Abrindo modal para tarefa:", task); // Debug
+  const [isModalVisible, setIsModalVisible] = useState(false); // Controla a visibilidade
+  const [isClosing, setIsClosing] = useState(false); // Controla a animação de fechamento
 
+  const openEditModal = (task) => {
     if (!task) {
       console.error("Erro: Nenhuma tarefa foi passada para edição.");
       return;
     }
-
+    
     setEditTask(task);
     setEditTitle(task.title);
-    setEditDueDate(task.dueDate || ""); // Evita erro se `dueDate` estiver indefinido
-    setIsEditModalOpen(true);
+    setEditDueDate(task.dueDate || "");
+    setIsModalVisible(true); // Mantém o modal no DOM
+    setIsClosing(false);
+  
+    setTimeout(() => {
+      setIsEditModalOpen(true); // Aplica animação suavemente após um pequeno atraso
+    }, 50);
   };
+  
 
   const closeEditModal = () => {
-    setIsEditModalOpen(false);
-    setEditTask(null);
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsEditModalOpen(false);
+      setIsModalVisible(false);
+      setEditTask(null);
+    }, 100); // Aguarda a animação terminar antes de remover do DOM
   };
 
   const handleEditTask = async () => {
@@ -152,11 +164,11 @@ const Tasks = () => {
         setFilter={setFilter}
         handleLogout={() => signOut(auth)}
       />
-      {isEditModalOpen && console.log("Modal deve estar visível")}
+      {isModalVisible && (
+        <div className={`modal-overlay ${isEditModalOpen ? "show" : ""} ${isClosing ? "closing" : ""}`} onClick={closeEditModal}>
+          <div className={`modal ${isEditModalOpen ? "show" : ""} ${isClosing ? "closing" : ""}`} onClick={(e) => e.stopPropagation()}>
 
-      {isEditModalOpen && (
-        <div className="modal-overlay" onClick={closeEditModal}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+
             <h2>Editar Tarefa</h2>
             <input
               className="modal-input-title"
@@ -203,157 +215,157 @@ const Tasks = () => {
             {filteredTasks.some(
               (task) => task.dueDate < new Date().toISOString().split("T")[0]
             ) && (
-              <>
-                <h3 className="task-category">Atrasadas</h3>
-                <ul>
-                  {filteredTasks
-                    .filter(
-                      (task) =>
-                        task.dueDate < new Date().toISOString().split("T")[0]
-                    )
-                    .map((task) => (
-                      <li key={task.id} className="task-item">
-                        <span
-                          className="task-checkbox"
-                          onClick={() =>
-                            toggleComplete(task.id, task.completed)
-                          }
-                        >
-                          {task.completed ? (
-                            <FaCheckCircle color="green" size={22} />
-                          ) : (
-                            <FaRegCircle size={22} />
-                          )}
-                        </span>
-                        <div className="task-content">
-                          <p>{task.title}</p>
-                          <small className="due-date" style={{ color: "red" }}>
-                            {new Date(task.dueDate).toLocaleDateString("pt-BR")}
-                          </small>
-                        </div>
-                        <button
-                          className="edit-button"
-                          onClick={() => openEditModal(task)}
-                        >
-                          <FaPen size={18} color="blue" />
-                        </button>
+                <>
+                  <h3 className="task-category">Atrasadas</h3>
+                  <ul>
+                    {filteredTasks
+                      .filter(
+                        (task) =>
+                          task.dueDate < new Date().toISOString().split("T")[0]
+                      )
+                      .map((task) => (
+                        <li key={task.id} className="task-item">
+                          <span
+                            className="task-checkbox"
+                            onClick={() =>
+                              toggleComplete(task.id, task.completed)
+                            }
+                          >
+                            {task.completed ? (
+                              <FaCheckCircle color="green" size={22} />
+                            ) : (
+                              <FaRegCircle size={22} />
+                            )}
+                          </span>
+                          <div className="task-content">
+                            <p>{task.title}</p>
+                            <small className="due-date" style={{ color: "red" }}>
+                              {new Date(task.dueDate).toLocaleDateString("pt-BR")}
+                            </small>
+                          </div>
+                          <button
+                            className="edit-button"
+                            onClick={() => openEditModal(task)}
+                          >
+                            <FaPen size={18} color="blue" />
+                          </button>
 
-                        <button
-                          className="delete-button"
-                          onClick={() => deleteTask(task.id)}
-                        >
-                          <FaTrash size={20} color="red" />
-                        </button>
-                      </li>
-                    ))}
-                </ul>
-              </>
-            )}
+                          <button
+                            className="delete-button"
+                            onClick={() => deleteTask(task.id)}
+                          >
+                            <FaTrash size={20} color="red" />
+                          </button>
+                        </li>
+                      ))}
+                  </ul>
+                </>
+              )}
 
             {/* Hoje */}
             {filteredTasks.some(
               (task) => task.dueDate === new Date().toISOString().split("T")[0]
             ) && (
-              <>
-                <h3 className="task-category">
-                  Hoje - <DataAtual />
-                </h3>
-                <ul>
-                  {filteredTasks
-                    .filter(
-                      (task) =>
-                        task.dueDate === new Date().toISOString().split("T")[0]
-                    )
-                    .map((task) => (
-                      <li key={task.id} className="task-item">
-                        <span
-                          className="task-checkbox"
-                          onClick={() =>
-                            toggleComplete(task.id, task.completed)
-                          }
-                        >
-                          {task.completed ? (
-                            <FaCheckCircle color="green" size={22} />
-                          ) : (
-                            <FaRegCircle size={22} />
-                          )}
-                        </span>
-                        <div className="task-content">
-                          <p>{task.title}</p>
-                          <small className="due-date" style={{ color: "blue" }}>
-                            {new Date(task.dueDate).toLocaleDateString("pt-BR")}
-                          </small>
-                        </div>
-                        <button
-                          className="edit-button"
-                          onClick={() => openEditModal(task)}
-                        >
-                          <FaPen size={18} color="blue" />
-                        </button>
-                        <button
-                          className="delete-button"
-                          onClick={() => deleteTask(task.id)}
-                        >
-                          <FaTrash size={20} color="red" />
-                        </button>
-                      </li>
-                    ))}
-                </ul>
-              </>
-            )}
+                <>
+                  <h3 className="task-category">
+                    Hoje - <DataAtual />
+                  </h3>
+                  <ul>
+                    {filteredTasks
+                      .filter(
+                        (task) =>
+                          task.dueDate === new Date().toISOString().split("T")[0]
+                      )
+                      .map((task) => (
+                        <li key={task.id} className="task-item">
+                          <span
+                            className="task-checkbox"
+                            onClick={() =>
+                              toggleComplete(task.id, task.completed)
+                            }
+                          >
+                            {task.completed ? (
+                              <FaCheckCircle color="green" size={22} />
+                            ) : (
+                              <FaRegCircle size={22} />
+                            )}
+                          </span>
+                          <div className="task-content">
+                            <p>{task.title}</p>
+                            <small className="due-date" style={{ color: "blue" }}>
+                              {new Date(task.dueDate).toLocaleDateString("pt-BR")}
+                            </small>
+                          </div>
+                          <button
+                            className="edit-button"
+                            onClick={() => openEditModal(task)}
+                          >
+                            <FaPen size={18} color="blue" />
+                          </button>
+                          <button
+                            className="delete-button"
+                            onClick={() => deleteTask(task.id)}
+                          >
+                            <FaTrash size={20} color="red" />
+                          </button>
+                        </li>
+                      ))}
+                  </ul>
+                </>
+              )}
 
             {/* Em Breve */}
             {filteredTasks.some(
               (task) => task.dueDate > new Date().toISOString().split("T")[0]
             ) && (
-              <>
-                <h3 className="task-category">Em Breve</h3>
-                <ul>
-                  {filteredTasks
-                    .filter(
-                      (task) =>
-                        task.dueDate > new Date().toISOString().split("T")[0]
-                    )
-                    .map((task) => (
-                      <li key={task.id} className="task-item">
-                        <span
-                          className="task-checkbox"
-                          onClick={() =>
-                            toggleComplete(task.id, task.completed)
-                          }
-                        >
-                          {task.completed ? (
-                            <FaCheckCircle color="green" size={22} />
-                          ) : (
-                            <FaRegCircle size={22} />
-                          )}
-                        </span>
-                        <div className="task-content">
-                          <p>{task.title}</p>
-                          <small
-                            className="due-date"
-                            style={{ color: "green" }}
+                <>
+                  <h3 className="task-category">Em Breve</h3>
+                  <ul>
+                    {filteredTasks
+                      .filter(
+                        (task) =>
+                          task.dueDate > new Date().toISOString().split("T")[0]
+                      )
+                      .map((task) => (
+                        <li key={task.id} className="task-item">
+                          <span
+                            className="task-checkbox"
+                            onClick={() =>
+                              toggleComplete(task.id, task.completed)
+                            }
                           >
-                            {new Date(task.dueDate).toLocaleDateString("pt-BR")}
-                          </small>
-                        </div>
-                        <button
-                          className="edit-button"
-                          onClick={() => openEditModal(task)}
-                        >
-                          <FaPen size={18} color="blue" />
-                        </button>
-                        <button
-                          className="delete-button"
-                          onClick={() => deleteTask(task.id)}
-                        >
-                          <FaTrash size={20} color="red" />
-                        </button>
-                      </li>
-                    ))}
-                </ul>
-              </>
-            )}
+                            {task.completed ? (
+                              <FaCheckCircle color="green" size={22} />
+                            ) : (
+                              <FaRegCircle size={22} />
+                            )}
+                          </span>
+                          <div className="task-content">
+                            <p>{task.title}</p>
+                            <small
+                              className="due-date"
+                              style={{ color: "green" }}
+                            >
+                              {new Date(task.dueDate).toLocaleDateString("pt-BR")}
+                            </small>
+                          </div>
+                          <button
+                            className="edit-button"
+                            onClick={() => openEditModal(task)}
+                          >
+                            <FaPen size={18} color="blue" />
+                          </button>
+                          <button
+                            className="delete-button"
+                            onClick={() => deleteTask(task.id)}
+                          >
+                            <FaTrash size={20} color="red" />
+                          </button>
+                        </li>
+                      ))}
+                  </ul>
+                </>
+              )}
           </div>
         </div>
       </main>
