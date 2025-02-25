@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../pages/Tasks.css"; // Importa o CSS correto
+import { FaPlus } from "react-icons/fa";
 
 const TaskForm = ({ handleAddTask }) => {
   const getTodayDate = () => {
@@ -10,6 +11,7 @@ const TaskForm = ({ handleAddTask }) => {
 
   const [newTask, setNewTask] = useState("");
   const [dueDate, setDueDate] = useState(getTodayDate());
+  const [isFormVisible, setIsFormVisible] = useState(false);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -21,7 +23,7 @@ const TaskForm = ({ handleAddTask }) => {
 
   return (
     <div className="form">
-      <form onSubmit={onSubmit} className="task-form">
+      <form onSubmit={onSubmit} className={`task-form ${isFormVisible ? "show" : ""}`}>
         <input
           type="text"
           className="new-task-input"
@@ -30,9 +32,19 @@ const TaskForm = ({ handleAddTask }) => {
           onChange={(e) => setNewTask(e.target.value)}
           required
         />
-        <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+        />
         <button type="submit">Adicionar</button>
       </form>
+      <button
+        className="addTaskFloat"
+        onClick={() => setIsFormVisible(!isFormVisible)}
+      >
+        <FaPlus size={30} />
+      </button>
     </div>
   );
 };

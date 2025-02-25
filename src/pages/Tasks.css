@@ -292,6 +292,10 @@ h1 {
   opacity: 0.8;
 }
 
+.addTaskFloat {
+  display: none;
+}
+
 /* Fim modal */
 
 /* ========== RESPONSIVIDADE PARA TASKS ========== */
@@ -301,13 +305,25 @@ h1 {
     margin-left: 0;
   }
 
+  .addTaskFloat {
+    display: block;
+    position: absolute;
+    border-radius: 100%;
+    bottom: 0;
+    right: 0;
+    margin: 30px;
+    width: 80px;
+    height: 80px;
+  }
+
+
   .task-container {
     flex-direction: column;
     align-items: center;
   }
 
   .task-form {
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
     padding: 0px;
@@ -315,7 +331,23 @@ h1 {
     margin: 0;
     height: auto;
     box-sizing: border-box;
+  
+    /* Transição suave */
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(-10px);
+    transition: max-height 0.8s ease-out, opacity 0.8s ease-out, transform 0.8s ease-out;
   }
+  
+  /* Quando o formulário estiver visível */
+  .task-form.show {
+    display: flex;
+    max-height: 500px; /* Define um valor grande suficiente para o conteúdo */
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
 
   .task-form input {
     text-align: center;
