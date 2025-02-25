@@ -2,6 +2,8 @@ import React from "react";
 import TaskItem from "./TaskItem";
 import DataAtual from "./DataAtual";
 
+
+
 const TaskList = ({ tasks, toggleComplete, deleteTask }) => {
   return (
     <div className="task-categories">

@@ -14,6 +14,9 @@ import {
 import { FaRegCircle, FaCheckCircle, FaPen, FaTrash, FaCalendarAlt } from "react-icons/fa";
 import "./Tasks.css";
 import Sidebar from "../components/Sidebar";
+import PreventReload from "../components/PreventReload"; // Caminho do arquivo
+
+
 
 const Tasks = () => {
   const auth = getAuth();
@@ -117,6 +120,8 @@ const Tasks = () => {
 
   return (
     <div className="tasks-container">
+    <PreventReload />
+
       <Sidebar user={user} filter={filter} setFilter={setFilter} handleLogout={() => signOut(auth)} />
 
       {isModalVisible && (
