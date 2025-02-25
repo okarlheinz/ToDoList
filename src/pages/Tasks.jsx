@@ -1,37 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { db } from "../firebaseConfig";
-import {
-  collection,
-  addDoc,
-  query,
-  where,
-  onSnapshot,
-  updateDoc,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
-import { FaRegCircle, FaCheckCircle, FaPen, FaTrash, FaCalendarAlt } from "react-icons/fa";
+import { collection, addDoc, query, where, onSnapshot, updateDoc, deleteDoc, doc } from "firebase/firestore";
+import { FaRegCircle, FaCheckCircle, FaPen, FaTrash } from "react-icons/fa";
 import "./Tasks.css";
 import Sidebar from "../components/Sidebar";
-
-
+import TaskForm from "../components/TaskForm";
 
 const Tasks = () => {
   const auth = getAuth();
   const [user, setUser] = useState(null);
   const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState("");
   const [filter, setFilter] = useState("open");
-
-  const getTodayDate = () => {
-    const today = new Date();
-    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
-    return today.toISOString().split("T")[0]; // Retorna YYYY-MM-DD
-  };
-
-  const [dueDate, setDueDate] = useState(getTodayDate());
-
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -52,19 +32,13 @@ const Tasks = () => {
     return () => unsubscribe();
   }, []);
 
-  const handleAddTask = async (e) => {
-    e.preventDefault();
-    if (!newTask.trim()) return;
-
+  const handleAddTask = async (title, dueDate) => {
     await addDoc(collection(db, "tasks"), {
-      title: newTask,
+      title,
       completed: false,
       userId: user.uid,
-      dueDate: dueDate,
+      dueDate,
     });
-
-    setNewTask("");
-    setDueDate(getTodayDate());
   };
 
   const toggleComplete = async (id, completed) => {
@@ -100,14 +74,20 @@ const Tasks = () => {
     closeEditModal();
   };
 
+  const getTodayDate = () => {
+    const today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    return today.toISOString().split("T")[0];
+  };
+
+  const today = getTodayDate();
+
   const filterNames = {
     open: "Tarefas em Aberto",
     closed: "Tarefas Concluídas",
     today: "Tarefas para Hoje",
     future: "Tarefas Futuras",
   };
-
-  const today = getTodayDate();
 
   const filteredTasks = tasks.filter((task) => {
     if (filter === "open") return !task.completed;
@@ -137,33 +117,47 @@ const Tasks = () => {
 
       <main className="task-list">
         <h1>{filterNames[filter]}</h1>
-        <div className="form">
-          <form onSubmit={handleAddTask} className="task-form">
-            <input type="text" className="new-task-input" placeholder="Digite aqui uma nova tarefa..." value={newTask} onChange={(e) => setNewTask(e.target.value)} required />
-            <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
-            <button type="submit">Adicionar</button>
-          </form>
+        <TaskForm handleAddTask={handleAddTask} />
 
-          <div className="task-categories">
-            {filter === "open" && (
+        <div className="task-categories">
+          {filter === "open" ? (
+            <>
               <div className="task-category">
                 <h3>Atrasadas</h3>
-                <ul>{filteredTasks.filter(task => task.dueDate < today).map(task => renderTask(task, "red", toggleComplete, openEditModal, deleteTask))}</ul>
-                <h3>Hoje</h3>
-                <ul>{filteredTasks.filter(task => task.dueDate === today).map(task => renderTask(task, "blue", toggleComplete, openEditModal, deleteTask))}</ul>
-                <h3>Em Breve</h3>
-                <ul>{filteredTasks.filter(task => task.dueDate > today).map(task => renderTask(task, "green", toggleComplete, openEditModal, deleteTask))}</ul>
+                <ul>
+                  {filteredTasks
+                    .filter((task) => task.dueDate < today)
+                    .map((task) => renderTask(task, "red", toggleComplete, openEditModal, deleteTask))}
+                </ul>
               </div>
-            )}
-            {filter !== "open" && <ul>{filteredTasks.map(task => renderTask(task, "black", toggleComplete, openEditModal, deleteTask))}</ul>}
-          </div>
+              <div className="task-category">
+                <h3>Hoje</h3>
+                <ul>
+                  {filteredTasks
+                    .filter((task) => task.dueDate === today)
+                    .map((task) => renderTask(task, "blue", toggleComplete, openEditModal, deleteTask))}
+                </ul>
+              </div>
+              <div className="task-category">
+                <h3>Em Breve</h3>
+                <ul>
+                  {filteredTasks
+                    .filter((task) => task.dueDate > today)
+                    .map((task) => renderTask(task, "green", toggleComplete, openEditModal, deleteTask))}
+                </ul>
+              </div>
+            </>
+          ) : (
+            <ul className="task-category">
+              {filteredTasks.map((task) => renderTask(task, "black", toggleComplete, openEditModal, deleteTask))}
+            </ul>
+          )}
         </div>
       </main>
     </div>
   );
 };
 
-// 🔹 Agora os botões funcionam corretamente!
 const renderTask = (task, color, toggleComplete, openEditModal, deleteTask) => (
   <li key={task.id} className="task-item">
     <span className="task-checkbox" onClick={() => toggleComplete(task.id, task.completed)}>
@@ -176,7 +170,7 @@ const renderTask = (task, color, toggleComplete, openEditModal, deleteTask) => (
       </small>
     </div>
     <button className="edit-button" onClick={() => openEditModal(task)}>
-      <FaPen size={18} color="blue" />
+      <FaPen className="icons" size={18} color="blue" />
     </button>
     <button className="delete-button" onClick={() => deleteTask(task.id)}>
       <FaTrash size={20} color="red" />
