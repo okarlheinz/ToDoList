@@ -248,6 +248,8 @@ h1 {
 .modal-input-title {
   display: flex;
   width: 80%;
+  text-align: center;
+  justify-content: center;
 }
 
 /* Ajusta os botões dentro do modal */

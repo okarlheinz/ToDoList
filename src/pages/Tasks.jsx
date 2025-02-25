@@ -35,7 +35,7 @@ const Tasks = () => {
   const [user, setUser] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [dueDate, setDueDate] = useState(new Date().toISOString().split("T")[0]);
   const [filter, setFilter] = useState("open");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editTask, setEditTask] = useState(null);
