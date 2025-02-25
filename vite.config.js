@@ -7,4 +7,6 @@ export default defineConfig({
   server: {
     historyApiFallback: true, // Redireciona todas as rotas para index.html
   },
+  base: "./", // 🔹 Corrige o carregamento dos arquivos no HostGator
 })
+
