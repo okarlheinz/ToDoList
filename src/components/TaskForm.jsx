@@ -56,7 +56,10 @@ const TaskForm = ({ handleAddTask }) => {
 
       {/* Modal no celular */}
       {isMobile && isModalOpen && (
-        <div className="mobile-modal-overlay" onClick={() => setIsModalOpen(false)}>
+        <div
+          className="mobile-modal-overlay"
+          onClick={() => setIsModalOpen(false)}
+        >
           <div className="mobile-modal" onClick={(e) => e.stopPropagation()}>
             <h2>Nova Tarefa</h2>
             <form onSubmit={onSubmit} className="modal-task-form">

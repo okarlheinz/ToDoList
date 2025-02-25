@@ -432,37 +432,28 @@ h1 {
   align-items: center;
 }
 
-/* Botão de Fechar no Modal */
-.closeModalBtn {
-  width: 100%;
-  padding: 10px;
-  background: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 15px;
-}
-
-.closeModalBtn:hover {
-  background: #c0392b;
+.mobile-modal h2 {
+  width: 80%;
 }
 
 /* Ajuste para os inputs dentro do modal */
 .mobile-modal input {
   width: 100%;
-  /* padding: 10px; */
-  /* margin: 10px 0; */
+  margin: 0;
+  text-align: left;
   border: none;
   outline: none;
   border-radius: 5px;
-  font-size: 16px;
-  background-color: white;
-  color: black;
+  font-size: 20px;
+}
+
+.mobile-modal .new-task-input {
+  margin-top: 5px;
 }
 
 /* Ajuste para o botão dentro do modal */
 .mobile-modal button {
+  margin-top: 5px;
   width: 100%;
   padding: 10px;
   border: none;
