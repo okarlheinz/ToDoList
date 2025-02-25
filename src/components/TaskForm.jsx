@@ -61,7 +61,7 @@ const TaskForm = ({ handleAddTask }) => {
           onClick={() => setIsModalOpen(false)}
         >
           <div className="mobile-modal" onClick={(e) => e.stopPropagation()}>
-            <h2>Nova Tarefa</h2>
+            <h2>Adicionar</h2>
             <form onSubmit={onSubmit} className="modal-task-form">
               <input
                 type="text"
