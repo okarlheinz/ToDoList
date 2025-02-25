@@ -11,7 +11,7 @@ body {
   transition: margin-left 0.3s ease-in-out;
 }
 
-.sidebar.collapsed+.task-list {
+.sidebar.collapsed + .task-list {
   margin-left: 50px;
 }
 
@@ -206,7 +206,8 @@ h1 {
   z-index: 9999;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.1s ease-in-out, visibility 0.1s ease-in-out, background 0.1s ease-in-out;
+  transition: opacity 0.1s ease-in-out, visibility 0.1s ease-in-out,
+    background 0.1s ease-in-out;
 }
 
 .modal {
@@ -236,7 +237,6 @@ h1 {
   opacity: 1;
 }
 
-
 /* Quando o modal estiver fechando */
 .modal-overlay.closing {
   opacity: 0;
@@ -247,10 +247,6 @@ h1 {
   transform: scale(0.85);
   opacity: 0;
 }
-
-
-
-
 
 /* Alinha botões no modal */
 .modal-buttons {
@@ -300,7 +296,6 @@ h1 {
 
 /* ========== RESPONSIVIDADE PARA TASKS ========== */
 @media screen and (max-width: 768px) {
-
   .task-list {
     margin-left: 0;
   }
@@ -316,7 +311,6 @@ h1 {
     height: 80px;
   }
 
-
   .task-container {
     flex-direction: column;
     align-items: center;
@@ -331,23 +325,10 @@ h1 {
     margin: 0;
     height: auto;
     box-sizing: border-box;
-  
-    /* Transição suave */
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transform: translateY(-10px);
-    transition: max-height 0.8s ease-out, opacity 0.8s ease-out, transform 0.8s ease-out;
   }
-  
-  /* Quando o formulário estiver visível */
   .task-form.show {
     display: flex;
-    max-height: 500px; /* Define um valor grande suficiente para o conteúdo */
-    opacity: 1;
-    transform: translateY(0);
   }
-  
 
   .task-form input {
     text-align: center;
@@ -376,5 +357,156 @@ h1 {
     flex-direction: column;
     margin: 30px 0 0 0;
     font-size: 15px;
+  }
+}
+
+.addTaskFloat {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .addTaskFloat {
+    display: block;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+  }
+
+  .addTaskFloat:hover {
+    background: #2980b9;
+    transform: scale(1.1);
+  }
+}
+
+/* ====== Modal no Celular ====== */
+.mobile-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 10000;
+  opacity: 0;
+  animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+.mobile-modal {
+  width: 100%;
+  max-width: 600px;
+  background: white;
+  /* border-radius: 20px 20px 0 0; */
+  padding: 20px;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 10001;
+  box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.3s ease-in-out forwards;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.modal-task-form {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* flex-direction: column; */
+  align-items: center;
+}
+
+/* Botão de Fechar no Modal */
+.closeModalBtn {
+  width: 100%;
+  padding: 10px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.closeModalBtn:hover {
+  background: #c0392b;
+}
+
+/* Ajuste para os inputs dentro do modal */
+.mobile-modal input {
+  width: 100%;
+  /* padding: 10px; */
+  /* margin: 10px 0; */
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: white;
+  color: black;
+}
+
+/* Ajuste para o botão dentro do modal */
+.mobile-modal button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+/* Botão "Adicionar" */
+.mobile-modal button[type="submit"] {
+  background: #3498db;
+  color: white;
+}
+
+.mobile-modal button[type="submit"]:hover {
+  background: #2980b9;
+}
+
+/* Botão "Fechar" */
+.closeModalBtn {
+  background: #e74c3c;
+  color: white;
+}
+
+.closeModalBtn:hover {
+  background: #c0392b;
+}
+
+/* ====== Animações ====== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translate(-50%, 100%);
+  }
+  to {
+    transform: translate(-50%, 0);
   }
 }
