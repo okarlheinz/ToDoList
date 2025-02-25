@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { db } from "../firebaseConfig";
-import {
-  collection,
-  addDoc,
-  query,
-  where,
-  onSnapshot,
-  updateDoc,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
+import { collection, addDoc, query, where, onSnapshot, updateDoc, deleteDoc, doc } from "firebase/firestore";
 import { FaRegCircle, FaCheckCircle, FaPen, FaTrash } from "react-icons/fa";
 import "./Tasks.css";
 import Sidebar from "../components/Sidebar";
@@ -32,10 +23,7 @@ const Tasks = () => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        const q = query(
-          collection(db, "tasks"),
-          where("userId", "==", currentUser.uid)
-        );
+        const q = query(collection(db, "tasks"), where("userId", "==", currentUser.uid));
         onSnapshot(q, (snapshot) => {
           setTasks(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
         });
@@ -82,10 +70,7 @@ const Tasks = () => {
 
   const handleEditTask = async () => {
     if (!editTask) return;
-    await updateDoc(doc(db, "tasks", editTask.id), {
-      title: editTitle,
-      dueDate: editDueDate,
-    });
+    await updateDoc(doc(db, "tasks", editTask.id), { title: editTitle, dueDate: editDueDate });
     closeEditModal();
   };
 
@@ -114,39 +99,14 @@ const Tasks = () => {
 
   return (
     <div className="tasks-container">
-      <Sidebar
-        user={user}
-        filter={filter}
-        setFilter={setFilter}
-        handleLogout={() => signOut(auth)}
-      />
+      <Sidebar user={user} filter={filter} setFilter={setFilter} handleLogout={() => signOut(auth)} />
 
       {isModalVisible && (
-        <div
-          className={`modal-overlay ${isEditModalOpen ? "show" : ""} ${
-            isClosing ? "closing" : ""
-          }`}
-          onClick={closeEditModal}
-        >
-          <div
-            className={`modal ${isEditModalOpen ? "show" : ""} ${
-              isClosing ? "closing" : ""
-            }`}
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className={`modal-overlay ${isEditModalOpen ? "show" : ""} ${isClosing ? "closing" : ""}`} onClick={closeEditModal}>
+          <div className={`modal ${isEditModalOpen ? "show" : ""} ${isClosing ? "closing" : ""}`} onClick={(e) => e.stopPropagation()}>
             <h2>Editar Tarefa</h2>
-            <input
-              type="text"
-              className="modal-input-title"
-              value={editTitle}
-              onChange={(e) => setEditTitle(e.target.value)}
-            />
-            <input
-              type="date"
-              className="modal-input-title"
-              value={editDueDate}
-              onChange={(e) => setEditDueDate(e.target.value)}
-            />
+            <input type="text" className="modal-input-title" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
+            <input type="date" className="modal-input-title" value={editDueDate} onChange={(e) => setEditDueDate(e.target.value)} />
             <div className="modal-buttons">
               <button onClick={handleEditTask}>Salvar</button>
               <button onClick={closeEditModal}>Cancelar</button>
@@ -162,77 +122,34 @@ const Tasks = () => {
         <div className="task-categories">
           {filter === "open" ? (
             <>
-              {/* Atrasadas */}
-              {filteredTasks.some((task) => task.dueDate < today) && (
-                <div className="task-category">
-                  <h3>Atrasadas</h3>
-                  <ul>
-                    {filteredTasks
-                      .filter((task) => task.dueDate < today)
-                      .map((task) =>
-                        renderTask(
-                          task,
-                          "red",
-                          toggleComplete,
-                          openEditModal,
-                          deleteTask
-                        )
-                      )}
-                  </ul>
-                </div>
-              )}
-
-              {/* Hoje */}
-              {filteredTasks.some((task) => task.dueDate === today) && (
-                <div className="task-category">
-                  <h3>Hoje</h3>
-                  <ul>
-                    {filteredTasks
-                      .filter((task) => task.dueDate === today)
-                      .map((task) =>
-                        renderTask(
-                          task,
-                          "blue",
-                          toggleComplete,
-                          openEditModal,
-                          deleteTask
-                        )
-                      )}
-                  </ul>
-                </div>
-              )}
-
-              {/* Em Breve */}
-              {filteredTasks.some((task) => task.dueDate > today) && (
-                <div className="task-category">
-                  <h3>Em Breve</h3>
-                  <ul>
-                    {filteredTasks
-                      .filter((task) => task.dueDate > today)
-                      .map((task) =>
-                        renderTask(
-                          task,
-                          "green",
-                          toggleComplete,
-                          openEditModal,
-                          deleteTask
-                        )
-                      )}
-                  </ul>
-                </div>
-              )}
+              <div className="task-category">
+                <h3>Atrasadas</h3>
+                <ul>
+                  {filteredTasks
+                    .filter((task) => task.dueDate < today)
+                    .map((task) => renderTask(task, "red", toggleComplete, openEditModal, deleteTask))}
+                </ul>
+              </div>
+              <div className="task-category">
+                <h3>Hoje</h3>
+                <ul>
+                  {filteredTasks
+                    .filter((task) => task.dueDate === today)
+                    .map((task) => renderTask(task, "blue", toggleComplete, openEditModal, deleteTask))}
+                </ul>
+              </div>
+              <div className="task-category">
+                <h3>Em Breve</h3>
+                <ul>
+                  {filteredTasks
+                    .filter((task) => task.dueDate > today)
+                    .map((task) => renderTask(task, "green", toggleComplete, openEditModal, deleteTask))}
+                </ul>
+              </div>
             </>
           ) : (
             <ul className="task-category">
-              {filteredTasks.map((task) =>
-                renderTask(
-                  task,
-                  "black",
-                  toggleComplete,
-                  openEditModal,
-                  deleteTask
-                )
-              )}
+              {filteredTasks.map((task) => renderTask(task, "black", toggleComplete, openEditModal, deleteTask))}
             </ul>
           )}
         </div>
@@ -243,15 +160,8 @@ const Tasks = () => {
 
 const renderTask = (task, color, toggleComplete, openEditModal, deleteTask) => (
   <li key={task.id} className="task-item">
-    <span
-      className="task-checkbox"
-      onClick={() => toggleComplete(task.id, task.completed)}
-    >
-      {task.completed ? (
-        <FaCheckCircle color="green" size={22} />
-      ) : (
-        <FaRegCircle size={22} />
-      )}
+    <span className="task-checkbox" onClick={() => toggleComplete(task.id, task.completed)}>
+      {task.completed ? <FaCheckCircle color="green" size={22} /> : <FaRegCircle size={22} />}
     </span>
     <div className="task-content">
       <p>{task.title}</p>

@@ -1,0 +1,348 @@
+/* Estilos gerais */
+body {
+  font-family: Arial, sans-serif;
+  background-image: url("../assets/wallpaper.jpg");
+  background-size: cover;
+  height: 100vh;
+}
+
+.task-list {
+  margin-left: 240px;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+.sidebar.collapsed+.task-list {
+  margin-left: 50px;
+}
+
+button {
+  padding: 10px 15px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+button:hover {
+  background: #2980b9;
+}
+
+/* Layout principal */
+.task-container {
+  display: flex;
+  height: 100vh;
+}
+
+.task-content {
+  padding: 20px;
+  flex-grow: 1;
+}
+
+/* Inputs */
+input[type="text"],
+input[type="date"] {
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  background-color: transparent;
+}
+
+.new-task-input {
+  width: 400px;
+}
+
+/* Lista de tarefas */
+ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  margin: 5px 0;
+  position: relative;
+  height: 5vh;
+  width: 50vw;
+  border-bottom: solid 1px #cdcdcd;
+  transition: background 0.3s ease-in-out;
+}
+
+/* Animação do checkbox */
+.task-checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #cdcdcd;
+  transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.task-checkbox.checked {
+  background: #3498db;
+  color: white;
+  transform: scale(1.2);
+}
+
+/* Suavização do texto ao marcar a tarefa */
+.task-text {
+  flex-grow: 1;
+  transition: color 0.3s ease-in-out;
+}
+
+.task-item.completed .task-text {
+  color: #95a5a6;
+  text-decoration: line-through;
+}
+
+.edit-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.edit-button:hover {
+  transform: scale(1.2);
+}
+
+/* Botão de excluir */
+.delete-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.delete-button:hover {
+  transform: scale(1.2);
+}
+
+/* Mensagens de feedback */
+.success-message {
+  color: green;
+  margin: 10px 0;
+}
+
+.error-message {
+  color: red;
+  margin: 10px 0;
+}
+
+/* Cabeçalho */
+h1 {
+  text-align: center;
+  padding: 50px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.task-form {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  margin: 5px 0;
+  position: relative;
+  height: 5vh;
+  width: 50vw;
+  border-top: solid 1px #cdcdcd;
+  border-bottom: solid 1px #cdcdcd;
+}
+
+.task-form input {
+  border: none;
+  outline: none;
+}
+
+.task-form .new-task-input {
+  margin-left: 15px;
+}
+
+.task-category {
+  display: flex;
+  flex-direction: column;
+  margin: 30px 200px 0 200px;
+  font-size: 15px;
+}
+
+.task-category h3 {
+  text-align: center;
+}
+
+/* Modal com efeito de fade-in e fade-out */
+.modal-overlay {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0);
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.1s ease-in-out, visibility 0.1s ease-in-out, background 0.1s ease-in-out;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  text-align: center;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: scale(0.85);
+  opacity: 0;
+  transition: transform 0.1s ease-in-out, opacity 0.1s ease-in-out;
+}
+
+/* Quando o modal for exibido */
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+  transform: scale(1);
+  opacity: 1;
+}
+
+
+/* Quando o modal estiver fechando */
+.modal-overlay.closing {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.modal.closing {
+  transform: scale(0.85);
+  opacity: 0;
+}
+
+
+
+
+
+/* Alinha botões no modal */
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.modal-input-title {
+  display: flex;
+  width: 80%;
+  text-align: center;
+  justify-content: center;
+}
+
+/* Ajusta os botões dentro do modal */
+.modal-buttons button {
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+/* Botão de salvar */
+.modal-buttons button:first-child {
+  background-color: #3498db;
+  color: white;
+}
+
+/* Botão de cancelar */
+.modal-buttons button:last-child {
+  background-color: #e74c3c;
+  color: white;
+}
+
+/* Efeito hover para os botões */
+.modal-buttons button:hover {
+  opacity: 0.8;
+}
+
+/* Fim modal */
+
+/* ========== RESPONSIVIDADE PARA TASKS ========== */
+@media screen and (max-width: 768px) {
+
+  .task-list {
+    margin-left: 0;
+  }
+
+  .task-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .task-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px;
+    padding-bottom: 20px;
+    margin: 0;
+    height: auto;
+    box-sizing: border-box;
+  }
+
+  .task-form input {
+    text-align: center;
+    font-size: large;
+    margin: 15px 0;
+  }
+
+  .task-form,
+  li {
+    width: 90vw;
+  }
+
+  .new-task-input {
+    width: 100%;
+  }
+
+  h1 {
+    margin-top: 100px;
+    margin-bottom: 15px;
+    padding: 0px;
+    /* padding-left: 240px; */
+  }
+
+  .task-category {
+    display: flex;
+    flex-direction: column;
+    margin: 30px 0 0 0;
+    font-size: 15px;
+  }
+}
