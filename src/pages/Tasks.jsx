@@ -15,6 +15,7 @@ import { FaRegCircle, FaCheckCircle, FaPen, FaTrash } from "react-icons/fa";
 import "./Tasks.css";
 import Sidebar from "../components/Sidebar";
 import TaskForm from "../components/TaskForm";
+import Logo from "../assets/Logo.png";
 
 const Tasks = () => {
   const auth = getAuth();
@@ -156,6 +157,7 @@ const Tasks = () => {
       )}
 
       <main className="task-list">
+        <img src={Logo} alt="CoderX" className="logo" />
         <h1>{filterNames[filter]}</h1>
         <TaskForm handleAddTask={handleAddTask} />
 

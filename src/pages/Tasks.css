@@ -35,6 +35,13 @@ button:hover {
   height: 100vh;
 }
 
+.logo {
+  display: flex;
+  width: 200px;
+  margin: auto;
+  margin-top: 10px;
+}
+
 .task-content {
   padding: 20px;
   flex-grow: 1;
@@ -147,7 +154,7 @@ li {
 /* Cabeçalho */
 h1 {
   text-align: center;
-  padding: 50px;
+  padding: 10px 50px 50px 50px;
   margin-bottom: 20px;
   color: #333;
 }

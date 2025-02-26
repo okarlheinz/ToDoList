@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaRegCircle, FaCheckCircle, FaCalendarDay, FaCalendarAlt, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
 import "./Sidebar.css"; // Arquivo de estilos separado
+import Logo from "../assets/Logo.pdf"
 
 const Sidebar = ({ user, filter, setFilter, handleLogout }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -9,6 +10,7 @@ const Sidebar = ({ user, filter, setFilter, handleLogout }) => {
     <nav className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
       {!isCollapsed && (
         <>
+
           <h3>
             Bem-vindo, <span>{user?.email}</span>
           </h3>
